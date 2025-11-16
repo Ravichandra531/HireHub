@@ -1,7 +1,7 @@
 const validateUser = (req, res, next) => {
   const { name, email, password, role } = req.body;
   if (!name || name.trim().length === 0) {
-    return res.status(400).json({ error: 'Name is required' });
+    return res.status(400).json({ error: 'name is required' });
   }
 
   const emailcheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
