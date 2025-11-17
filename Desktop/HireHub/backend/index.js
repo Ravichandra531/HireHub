@@ -8,7 +8,6 @@ const HOST = '0.0.0.0'
 const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
 
-app.use(cors());
 app.use(express.json());
 const allowedOrigins = [
   'https://hire-hub-livid.vercel.app', // <-- Add your new Vercel URL
