@@ -20,7 +20,7 @@ export default function Signup() {
     e.preventDefault();
     setMsg("");
 
-    const { ok, data } = await apiPost("/api/auth/signup", form);
+    const { ok, data } = await apiPost("/auth/signup", form);
 
     if (!ok) {
       setMsg(data.error);
