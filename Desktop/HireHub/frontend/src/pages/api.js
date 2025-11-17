@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = "https://hirehub-1-ddku.onrender.com/api"
 
 export async function apiPost(endpoint, body) {
   const res = await fetch(`${API_URL}${endpoint}`, {
