@@ -10,9 +10,9 @@ const jobRoutes = require('./routes/jobs');
 
 app.use(express.json());
 const allowedOrigins = [
-  "https://hire-hub.vercel.app",
+  "https://hire-hub-livid.vercel.app",
   "http://localhost:5173",
-  "http://localhost:3000"
+  "http://localhost:3002"
 ]
 
 app.use(cors({
