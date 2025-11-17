@@ -14,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     setMsg("");
 
-    const { ok, data } = await apiPost("/auth/login", form);
+    const { ok, data } = await apiPost("/api/auth/login", form);
 
     if (!ok) {
       setMsg(data.error);
