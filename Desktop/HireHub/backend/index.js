@@ -10,6 +10,16 @@ const jobRoutes = require('./routes/jobs');
 
 app.use(cors());
 app.use(express.json());
+const allowedOrigins = [
+  'https://hire-hub-livid.vercel.app', // <-- Add your new Vercel URL
+  // Add your other Vercel URL if you have a custom domain: 'https://hire-hub.vercel.app',
+  'http://localhost:3002', // Your local development environment
+];
+
+app.use(cors({
+  origin: allowedOrigins, // Set the origin to the allowed list
+  credentials: true
+}))
 
 // ADD THIS 👇
 app.get("/", (req, res) => {
