@@ -26,6 +26,14 @@ export default function Navbar() {
               <>
                 <Link to="/jobs/post" className="nav-link">Post Job</Link>
                 <Link to="/applications" className="nav-link">Applications</Link>
+                <Link to="/employer/jobs" className="nav-link">My Jobs</Link>
+                <Link to="/employer/dashboard" className="nav-link">Dashboard</Link>
+              </>
+            )}
+
+            {role === "JOBSEEKER" && (
+              <>
+                <Link to="/jobseeker/applications" className="nav-link">My Applications</Link>
               </>
             )}
           </>
