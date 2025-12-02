@@ -1,44 +1,36 @@
-export const API_URL = "https://hirehub-1-ddku.onrender.com" ;
+const API_URL = "https://hirehub-1-ddku.onrender.com/api"; // correct
 
-export async function apiGet(endpoint, token = null) {
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  const data = await res.json();
-  return { ok: res.ok, data };
-}
-
-export async function apiPost(endpoint, body, token = null) {
+export async function apiPost(endpoint, body) {
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  const data = await res.json();
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    // fallback for non-JSON response
+    data = await res.text();
+  }
+
   return { ok: res.ok, data };
 }
 
-export async function apiPut(endpoint, body, token) {
+export async function apiGet(endpoint) {
   const res = await fetch(`${API_URL}${endpoint}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
   });
-  const data = await res.json();
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    data = await res.text();
+  }
+
   return { ok: res.ok, data };
 }
 
-export async function apiDelete(endpoint, token) {
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  return { ok: res.ok, data };
-}
