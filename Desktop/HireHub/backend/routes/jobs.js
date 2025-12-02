@@ -1,34 +1,22 @@
-const express = require('express')
-const router = express.Router()
-const prisma = require('../prisma/client')
-const auth = require('../Middlewares/auth')
+const express = require("express");
+const auth = require("../Middlewares/auth");
+const authorizeRoles = require("../Middlewares/role");
+const {
+  createJob,
+  getAllJobs,
+  getJobById,
+  updateJob,
+  deleteJob,
+  getMyJobs,
+} = require("../controllers/jobController");
 
-router.post('/create',auth,async(req,res)=>{
-    if (req.user.role !== "EMPLOYER") {
-    return res.status(403).json({ error: "Access denied" });
-  }
-  const { title, description, skills, location, salary, experience } = req.body
-  try {
-    const job = await prisma.job.create({
-      data: {
-        title,
-        description,
-        skills,
-        location,
-        salary,
-        experience,
-        employerId: req.user.id
-      },
-    })
-    res.json({ message: "Job Created", job })
-    }catch(err){
-        res.status(500).json({ error: "Server Error" })
-    }
-})
+const router = express.Router();
 
-router.get("/all", async (req, res) => {
-  const jobs = await prisma.job.findMany({ include: { employer: true } });
-  res.json(jobs);
-});
+router.post("/create", auth, authorizeRoles("EMPLOYER"), createJob);
+router.get("/my-jobs", auth, authorizeRoles("EMPLOYER"), getMyJobs);
+router.get("/all", getAllJobs);
+router.get("/:id", getJobById);
+router.put("/:id", auth, authorizeRoles("EMPLOYER"), updateJob);
+router.delete("/:id", auth, authorizeRoles("EMPLOYER"), deleteJob);
 
-module.exports=router
+module.exports = router;

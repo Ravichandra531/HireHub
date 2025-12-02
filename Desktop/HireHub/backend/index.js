@@ -7,26 +7,41 @@ const HOST = '0.0.0.0'
 
 const authRoutes = require('./routes/auth');
 const jobRoutes = require('./routes/jobs');
+const profileRoutes = require('./routes/profile');
+const applicationRoutes = require('./routes/application');
 
-app.use(express.json());
 const allowedOrigins = [
   "https://hire-hub-livid.vercel.app",
-  "http://localhost:5173",
+  "http://localhost:5175",
   "http://localhost:3002"
 ]
 
-app.use(cors({
-  origin: allowedOrigins, // Set the origin to the allowed list
-  credentials: true
-}))
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); 
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-// ADD THIS 👇
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
-});
 
-app.use('/api/auth', authRoutes);
-app.use('/api/jobs', jobRoutes);
+app.options("*", cors());
+
+
+app.use(express.json());
+
+
+app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/applications", applicationRoutes);
 
 app.listen(port,HOST, () => {
   console.log(`Server is running on port ${port}`);

@@ -1,0 +1,36 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;
+}
+
+.auth-form {
+  background: white;
+  width: 350px;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.auth-form input,
+.auth-form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 12px;
+  border-radius: 5px;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 10px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.auth-message {
+  color: red;
+  text-align: center;
+}
