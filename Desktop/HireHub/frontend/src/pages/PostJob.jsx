@@ -9,9 +9,11 @@ export default function PostJob() {
   const nav = useNavigate();
   const [form, setForm] = useState({
     title: "",
-    company: "",
-    location: "",
     description: "",
+    skills: "",
+    location: "",
+    salary: "",
+    experience: "",
   });
 
   const handle = (e) =>
@@ -19,17 +21,28 @@ export default function PostJob() {
 
   const submit = async (e) => {
     e.preventDefault();
-    await apiPost("/jobs", form, token);
-    nav("/jobs");
+    const jobData = {
+      ...form,
+      salary: form.salary ? parseInt(form.salary) : null,
+    };
+    const { ok, data } = await apiPost("/jobs", jobData, token);
+    if (ok) {
+      alert("Job posted successfully!");
+      nav("/jobs");
+    } else {
+      alert(data.error || "Failed to post job");
+    }
   };
 
   return (
     <form className="job-form" onSubmit={submit}>
       <h2>Post Job</h2>
-      <input name="title" placeholder="Job Title" onChange={handle} />
-      <input name="company" placeholder="Company" onChange={handle} />
-      <input name="location" placeholder="Location" onChange={handle} />
-      <textarea name="description" placeholder="Description" onChange={handle} />
+      <input name="title" placeholder="Job Title" onChange={handle} required />
+      <input name="skills" placeholder="Required Skills (comma separated)" onChange={handle} required />
+      <input name="location" placeholder="Location" onChange={handle} required />
+      <input name="salary" type="number" placeholder="Salary (optional)" onChange={handle} />
+      <input name="experience" placeholder="Experience Required (optional)" onChange={handle} />
+      <textarea name="description" placeholder="Job Description" onChange={handle} required />
       <button>Create Job</button>
     </form>
   );

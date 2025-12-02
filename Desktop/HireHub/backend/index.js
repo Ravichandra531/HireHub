@@ -12,7 +12,7 @@ const applicationRoutes = require('./routes/application');
 
 const allowedOrigins = [
   "https://hire-hub-livid.vercel.app",
-  "http://localhost:5175",
+  "http://localhost:5173",
   "http://localhost:3002"
 ];
 

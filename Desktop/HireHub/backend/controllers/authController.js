@@ -51,7 +51,16 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ message: "Login success", token });
+    res.json({
+      message: "Login success",
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
 
   } catch (err) {
     res.status(500).json({ error: "Server Error" });
@@ -59,4 +68,4 @@ const login = async (req, res) => {
 };
 
 
-module.exports={signup,login}
+module.exports = { signup, login }

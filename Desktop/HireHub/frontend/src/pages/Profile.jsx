@@ -11,8 +11,8 @@ export default function Profile() {
     async function load() {
       const { ok, data } = await apiGet("/profile", token);
       if (ok) {
-        setForm(data.user);
-        setUser(data.user);
+        setForm(data);
+        setUser(data);
       }
     }
     load();
@@ -32,9 +32,13 @@ export default function Profile() {
   return (
     <form className="profile-form" onSubmit={submit}>
       <h2>My Profile</h2>
-      <input name="name" value={form.name} onChange={handle} />
-      <input name="email" value={form.email} onChange={handle} />
-      <button>Update</button>
+      <label>Name</label>
+      <input name="name" value={form.name} onChange={handle} required />
+      <label>Email</label>
+      <input name="email" value={form.email} readOnly disabled />
+      <label>Role</label>
+      <input value={form.role} readOnly disabled />
+      <button>Update Profile</button>
     </form>
   );
 }

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "../api";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 
 export default function EmployerJobs() {
+  const { token } = useAuth();
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     async function loadJobs() {
-      const res = await apiGet("/jobs/employer"); // backend route should return jobs for this employer
+      const res = await apiGet("/jobs/my-jobs", token);
       if (res.ok) setJobs(res.data);
     }
     loadJobs();
@@ -20,9 +22,9 @@ export default function EmployerJobs() {
       {jobs.map((job) => (
         <div className="job-card" key={job.id}>
           <h3>{job.title}</h3>
-          <p>{job.company} | {job.location}</p>
-          <p>₹ {job.salary}</p>
-          <Link to={`/employer/jobs/edit/${job.id}`} className="btn-blue">Edit</Link>
+          <p>{job.location} {job.salary && `| $${job.salary}`}</p>
+          <p>Skills: {job.skills}</p>
+          <Link to={`/jobs/edit/${job.id}`} className="btn-blue">Edit</Link>
         </div>
       ))}
     </div>

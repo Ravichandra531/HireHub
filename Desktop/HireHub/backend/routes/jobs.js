@@ -12,9 +12,9 @@ const {
 
 const router = express.Router();
 
-router.post("/create", auth, authorizeRoles("EMPLOYER"), createJob);
+router.get("/", getAllJobs);
+router.post("/", auth, authorizeRoles("EMPLOYER"), createJob);
 router.get("/my-jobs", auth, authorizeRoles("EMPLOYER"), getMyJobs);
-router.get("/all", getAllJobs);
 router.get("/:id", getJobById);
 router.put("/:id", auth, authorizeRoles("EMPLOYER"), updateJob);
 router.delete("/:id", auth, authorizeRoles("EMPLOYER"), deleteJob);

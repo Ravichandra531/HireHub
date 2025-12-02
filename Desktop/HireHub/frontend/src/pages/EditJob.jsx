@@ -8,11 +8,11 @@ export default function EditJob() {
 
   const [form, setForm] = useState({
     title: "",
-    company: "",
+    description: "",
+    skills: "",
     location: "",
     salary: "",
-    description: "",
-    type: "FULLTIME",
+    experience: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -32,11 +32,11 @@ export default function EditJob() {
 
       setForm({
         title: data.title,
-        company: data.company,
-        location: data.location,
-        salary: data.salary,
         description: data.description,
-        type: data.type,
+        skills: data.skills,
+        location: data.location,
+        salary: data.salary || "",
+        experience: data.experience || "",
       });
 
       setLoading(false);
@@ -54,7 +54,12 @@ export default function EditJob() {
 
     const token = localStorage.getItem("token");
 
-    const { ok, data } = await apiPut(`/jobs/${id}`, form, token);
+    const jobData = {
+      ...form,
+      salary: form.salary ? parseInt(form.salary) : null,
+    };
+
+    const { ok, data } = await apiPut(`/jobs/${id}`, jobData, token);
 
     if (!ok) {
       setMsg(data.error || "Update failed");
@@ -85,9 +90,9 @@ export default function EditJob() {
 
         <input
           type="text"
-          name="company"
-          placeholder="Company Name"
-          value={form.company}
+          name="skills"
+          placeholder="Required Skills (comma separated)"
+          value={form.skills}
           onChange={handleChange}
           required
         />
@@ -104,17 +109,18 @@ export default function EditJob() {
         <input
           type="number"
           name="salary"
-          placeholder="Salary"
+          placeholder="Salary (optional)"
           value={form.salary}
           onChange={handleChange}
         />
 
-        <select name="type" value={form.type} onChange={handleChange}>
-          <option value="FULLTIME">Full Time</option>
-          <option value="PARTTIME">Part Time</option>
-          <option value="INTERNSHIP">Internship</option>
-          <option value="REMOTE">Remote</option>
-        </select>
+        <input
+          type="text"
+          name="experience"
+          placeholder="Experience Required (optional)"
+          value={form.experience}
+          onChange={handleChange}
+        />
 
         <textarea
           name="description"

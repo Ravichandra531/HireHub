@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
 
   const login = (tok, userData) => {
     localStorage.setItem("token", tok);
+    localStorage.setItem("role", userData.role);
     setToken(tok);
     setUser(userData);
   };

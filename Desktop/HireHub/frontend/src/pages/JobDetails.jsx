@@ -12,14 +12,18 @@ export default function JobDetails() {
   useEffect(() => {
     async function load() {
       const { ok, data } = await apiGet(`/jobs/${id}`, token);
-      if (ok) setJob(data.job);
+      if (ok) setJob(data);
     }
     load();
   }, []);
 
   const apply = async () => {
-    await apiPost("/applications", { jobId: id }, token);
-    alert("Application submitted!");
+    const { ok, data } = await apiPost("/applications", { jobId: parseInt(id) }, token);
+    if (ok) {
+      alert("Application submitted successfully!");
+    } else {
+      alert(data.error || "Failed to apply");
+    }
   };
 
   const remove = async () => {
@@ -32,7 +36,12 @@ export default function JobDetails() {
   return (
     <div className="job-detail">
       <h2>{job.title}</h2>
-      <p>{job.company}</p>
+      <p><strong>Posted by:</strong> {job.employer?.name || 'Unknown'}</p>
+      <p><strong>Location:</strong> {job.location}</p>
+      {job.salary && <p><strong>Salary:</strong> ${job.salary}</p>}
+      {job.experience && <p><strong>Experience:</strong> {job.experience}</p>}
+      {job.skills && <p><strong>Required Skills:</strong> {job.skills}</p>}
+      <p><strong>Description:</strong></p>
       <p>{job.description}</p>
 
       {user.role === "JOBSEEKER" && (

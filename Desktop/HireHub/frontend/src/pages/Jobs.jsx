@@ -11,7 +11,7 @@ export default function Jobs() {
   useEffect(() => {
     async function load() {
       const { ok, data } = await apiGet("/jobs", token);
-      if (ok) setJobs(data.jobs);
+      if (ok) setJobs(data);
     }
     load();
   }, []);
@@ -27,8 +27,9 @@ export default function Jobs() {
         {jobs.map((job) => (
           <Link to={`/jobs/${job.id}`} className="job-card" key={job.id}>
             <h3>{job.title}</h3>
-            <p>{job.company}</p>
+            <p>Posted by: {job.employer?.name || 'Unknown'}</p>
             <span>{job.location}</span>
+            {job.salary && <span> • ${job.salary}</span>}
           </Link>
         ))}
       </div>
