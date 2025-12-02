@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3002/api";
+export const API_URL = "https://hirehub-1-ddku.onrender.com/api"
 
 export async function apiGet(endpoint, token = null) {
   const res = await fetch(`${API_URL}${endpoint}`, {
