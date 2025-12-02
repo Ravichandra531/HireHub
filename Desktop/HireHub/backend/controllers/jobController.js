@@ -19,8 +19,8 @@ const createJob = async (req, res) => {
     res.status(201).json({ message: "Job posted successfully", job });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create job" });
+    console.error("Error creating job:", err);
+    res.status(500).json({ error: "Failed to create job", details: err.message });
   }
 };
 
