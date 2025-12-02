@@ -1,62 +1,44 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { apiPost } from "../api";
-import { useAuth } from "../context/AuthContext";
-import "../styles/auth.css";
+export const API_URL = "https://hirehub-1-ddku.onrender.com/api"
 
-export default function Login() {
-  const { login } = useAuth();
-  const [msg, setMsg] = useState("");
-  const [form, setForm] = useState({ email: "", password: "" });
-  const navigate = useNavigate();
+export async function apiGet(endpoint, token = null) {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+export async function apiPost(endpoint, body, token = null) {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
 
-  const submit = async (e) => {
-    e.preventDefault();
+export async function apiPut(endpoint, body, token) {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
 
-    try {
-      const { ok, data } = await apiPost("/auth/login", form);
-
-      if (!ok) {
-        // show error message, fallback to string if data.error is missing
-        const errorMsg = (data && data.error) || data || "Login failed";
-        return setMsg(errorMsg);
-      }
-
-      // login success: save token and user to context
-      login(data.token, data.user);
-      navigate("/jobs");
-    } catch (err) {
-      setMsg("Unexpected error. Please try again.");
-      console.error(err);
-    }
-  };
-
-  return (
-    <div className="auth-container">
-      <form onSubmit={submit} className="auth-form">
-        <h2>Login</h2>
-        {msg && <p className="auth-message">{msg}</p>}
-        <input
-          placeholder="Email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-        />
-        <input
-          placeholder="Password"
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-        />
-        <button type="submit">Login</button>
-        <p>
-          Don't have an account? <Link to="/">Signup</Link>
-        </p>
-      </form>
-    </div>
-  );
+export async function apiDelete(endpoint, token) {
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
 }
