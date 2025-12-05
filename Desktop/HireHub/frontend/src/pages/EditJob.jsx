@@ -70,68 +70,113 @@ export default function EditJob() {
     setTimeout(() => navigate(`/jobs/${id}`), 1000);
   };
 
-  if (loading) return <p className="loading">Loading job...</p>;
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-[50vh]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+    </div>
+  );
 
   return (
-    <div className="job-form-container">
-      <form onSubmit={submit} className="job-form">
-        <h2>Edit Job</h2>
+    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">Edit Job</h2>
 
-        {msg && <p className="form-msg">{msg}</p>}
+      {msg && (
+        <div className={`mb-6 p-4 rounded-md ${msg.includes("success") ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`}>
+          {msg}
+        </div>
+      )}
 
-        <input
-          type="text"
-          name="title"
-          placeholder="Job Title"
-          value={form.title}
-          onChange={handleChange}
-          required
-        />
+      <form onSubmit={submit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job Title</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Job Title"
+            value={form.title}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="skills"
-          placeholder="Required Skills (comma separated)"
-          value={form.skills}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Required Skills</label>
+          <input
+            type="text"
+            name="skills"
+            placeholder="Required Skills (comma separated)"
+            value={form.skills}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+        </div>
 
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={form.location}
-          onChange={handleChange}
-          required
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
+            <input
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={form.location}
+              onChange={handleChange}
+              required
+              className="input-field"
+            />
+          </div>
 
-        <input
-          type="number"
-          name="salary"
-          placeholder="Salary (optional)"
-          value={form.salary}
-          onChange={handleChange}
-        />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Salary (Annual)</label>
+            <input
+              type="number"
+              name="salary"
+              placeholder="Salary (optional)"
+              value={form.salary}
+              onChange={handleChange}
+              className="input-field"
+            />
+          </div>
+        </div>
 
-        <input
-          type="text"
-          name="experience"
-          placeholder="Experience Required (optional)"
-          value={form.experience}
-          onChange={handleChange}
-        />
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Experience Required</label>
+          <input
+            type="text"
+            name="experience"
+            placeholder="Experience Required (optional)"
+            value={form.experience}
+            onChange={handleChange}
+            className="input-field"
+          />
+        </div>
 
-        <textarea
-          name="description"
-          placeholder="Job Description"
-          value={form.description}
-          onChange={handleChange}
-          rows="5"
-          required
-        ></textarea>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job Description</label>
+          <textarea
+            name="description"
+            placeholder="Job Description"
+            value={form.description}
+            onChange={handleChange}
+            rows="6"
+            required
+            className="input-field resize-y"
+          ></textarea>
+        </div>
 
-        <button className="job-btn">Update Job</button>
+        <div className="pt-4 flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={() => navigate(`/jobs/${id}`)}
+            className="btn btn-secondary"
+          >
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-primary">
+            Update Job
+          </button>
+        </div>
       </form>
     </div>
   );

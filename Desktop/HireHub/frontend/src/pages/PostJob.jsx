@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiPost } from "../api";
 import { useAuth } from "../context/AuthContext";
-import "../styles/jobform.css";
 
 export default function PostJob() {
   const { token } = useAuth();
@@ -35,15 +34,92 @@ export default function PostJob() {
   };
 
   return (
-    <form className="job-form" onSubmit={submit}>
-      <h2>Post Job</h2>
-      <input name="title" placeholder="Job Title" onChange={handle} required />
-      <input name="skills" placeholder="Required Skills (comma separated)" onChange={handle} required />
-      <input name="location" placeholder="Location" onChange={handle} required />
-      <input name="salary" type="number" placeholder="Salary (optional)" onChange={handle} />
-      <input name="experience" placeholder="Experience Required (optional)" onChange={handle} />
-      <textarea name="description" placeholder="Job Description" onChange={handle} required />
-      <button>Create Job</button>
-    </form>
+    <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">Post a New Job</h2>
+      <form onSubmit={submit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job Title</label>
+          <input
+            name="title"
+            placeholder="e.g. Senior Frontend Developer"
+            onChange={handle}
+            required
+            className="input-field"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Location</label>
+            <input
+              name="location"
+              placeholder="e.g. Remote, New York, NY"
+              onChange={handle}
+              required
+              className="input-field"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Salary (Annual)</label>
+            <input
+              name="salary"
+              type="number"
+              placeholder="e.g. 120000"
+              onChange={handle}
+              className="input-field"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Required Skills</label>
+          <input
+            name="skills"
+            placeholder="e.g. React, Node.js, TypeScript (comma separated)"
+            onChange={handle}
+            required
+            className="input-field"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Experience Required</label>
+          <input
+            name="experience"
+            placeholder="e.g. 3+ years"
+            onChange={handle}
+            className="input-field"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Job Description</label>
+          <textarea
+            name="description"
+            rows={6}
+            placeholder="Describe the role, responsibilities, and requirements..."
+            onChange={handle}
+            required
+            className="input-field resize-y"
+          />
+        </div>
+
+        <div className="pt-4 flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={() => nav("/jobs")}
+            className="btn btn-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="btn btn-primary"
+          >
+            Create Job
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
