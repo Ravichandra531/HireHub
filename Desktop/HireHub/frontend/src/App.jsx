@@ -3,8 +3,8 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-import Signup from "./pages/signup";
-import Login from "./pages/login";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import EditJob from "./pages/EditJob";
