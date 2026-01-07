@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "type": "commonjs",
   "dependencies": {
     "@railway/cli": "^4.11.1",
+    "@prisma/client": "^4.16.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -21,7 +23,6 @@
     "multer": "^2.0.2"
   },
   "devDependencies": {
-    "@prisma/client": "^4.16.2",
     "prisma": "^4.16.2"
   }
 }
