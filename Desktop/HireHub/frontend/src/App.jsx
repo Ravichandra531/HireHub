@@ -3,8 +3,8 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-import Signup from "./pages/signup";
-import Login from "./pages/login";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import EditJob from "./pages/EditJob";
@@ -34,9 +34,9 @@ export default function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
 
             {/* Protected routes */}
-            <Route path="/jobs/:id" element={<ProtectedRoute><JobDetails /></ProtectedRoute>} />
             <Route path="/jobs/post" element={<ProtectedRoute><PostJob /></ProtectedRoute>} />
             <Route path="/jobs/edit/:id" element={<ProtectedRoute><EditJob /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

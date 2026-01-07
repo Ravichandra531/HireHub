@@ -3,23 +3,55 @@ import { apiGet } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 export default function Applications() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    const { ok, data } = await apiGet("/applications/my-applications", token);
-    if (ok) setApps(data);
-    setLoading(false);
+    try {
+      console.log("Loading applications with token:", token ? "present" : "missing");
+      console.log("User:", user);
+
+      const { ok, data } = await apiGet("/applications/my-applications", token);
+
+      console.log("Applications response:", { ok, data });
+
+      if (ok) {
+        setApps(data);
+      } else {
+        setError(data.error || "Failed to load applications");
+      }
+    } catch (err) {
+      console.error("Error loading applications:", err);
+      setError("Unable to connect to the server");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-[50vh]">
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="max-w-5xl mx-auto">
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <h3 className="text-red-800 font-semibold mb-2">Error Loading Applications</h3>
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={loadData}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
     </div>
   );
 
@@ -47,10 +79,7 @@ export default function Applications() {
 
               <div className="space-y-2 text-sm text-slate-600">
                 <div className="flex items-center">
-                  <svg className="h-4 w-4 mr-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <span className="h-4 w-4 mr-2 text-lg">📍</span>
                   {app.job?.location || "N/A"}
                 </div>
                 {app.job?.salary && (

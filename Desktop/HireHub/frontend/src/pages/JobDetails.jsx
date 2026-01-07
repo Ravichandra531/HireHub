@@ -11,11 +11,11 @@ export default function JobDetails() {
 
   useEffect(() => {
     async function load() {
-      const { ok, data } = await apiGet(`/jobs/${id}`, token);
+      const { ok, data } = await apiGet(`/jobs/${id}`);
       if (ok) setJob(data);
     }
     load();
-  }, [id, token]);
+  }, [id]);
 
   const apply = async () => {
     const { ok, data } = await apiPost("/applications", { jobId: parseInt(id) }, token);
@@ -56,10 +56,7 @@ export default function JobDetails() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="flex items-center text-slate-600">
-            <svg className="h-5 w-5 mr-2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <span className="h-5 w-5 mr-2 text-xl">📍</span>
             {job.location}
           </div>
           {job.salary && (
@@ -101,13 +98,13 @@ export default function JobDetails() {
         </div>
 
         <div className="border-t border-slate-200 pt-8 flex gap-4">
-          {user.role === "JOBSEEKER" && (
+          {user?.role === "JOBSEEKER" && (
             <button onClick={apply} className="btn btn-primary">
               Apply Now
             </button>
           )}
 
-          {user.role === "EMPLOYER" && (
+          {user?.role === "EMPLOYER" && (
             <>
               <Link to={`/jobs/edit/${job.id}`} className="btn btn-secondary">
                 Edit Job

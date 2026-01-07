@@ -1,13 +1,17 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const login = (tok, userData) => {
     localStorage.setItem("token", tok);
+    localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("role", userData.role);
     setToken(tok);
     setUser(userData);
@@ -15,6 +19,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setToken(null);
     setUser(null);
   };

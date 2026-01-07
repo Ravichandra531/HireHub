@@ -43,10 +43,7 @@ export default function EmployerJobs() {
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-slate-900 mb-1">{job.title}</h3>
                 <div className="flex items-center text-sm text-slate-500 mb-2">
-                  <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <span className="h-4 w-4 mr-1.5 text-lg">📍</span>
                   {job.location}
                 </div>
                 {job.salary && (

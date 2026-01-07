@@ -4,6 +4,7 @@ const prisma = require("../prisma/client");
 
 const signup = async (req, res) => {
   const { name, email, password, role } = req.body;
+  console.log("Signup Request:", req.body);
 
   try {
     const exists = await prisma.user.findUnique({ where: { email } });
@@ -25,6 +26,7 @@ const signup = async (req, res) => {
     res.status(201).json({ message: "User Created Successfully" });
 
   } catch (err) {
+    console.error("Signup Error:", err);
     res.status(500).json({ error: "Something went wrong" });
   }
 };

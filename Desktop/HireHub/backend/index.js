@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const app = express();
 const port = process.env.PORT;
 const cors = require('cors');
@@ -36,6 +37,9 @@ app.use(
 app.options(/.*/, cors());
 
 app.use(express.json());
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
