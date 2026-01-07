@@ -1,4 +1,5 @@
-export const API_URL = "https://hirehub-1-ddku.onrender.com";
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+export const API_URL = isLocal ? "http://localhost:3002/api" : "https://hirehub-1-ddku.onrender.com/api";
 
 export async function apiGet(endpoint, token = null) {
   const res = await fetch(`${API_URL}${endpoint}`, {
