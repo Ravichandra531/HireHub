@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiGet } from "../api";
+import { apiGet, apiPut, API_URL } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 export default function Applications() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const role = user?.role || localStorage.getItem("role");
+  const isEmployer = role === "EMPLOYER";
+
   useEffect(() => {
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [role]);
 
   const loadData = async () => {
     try {
-      const { ok, data } = await apiGet("/applications/my-applications", token);
+      const endpoint = isEmployer ? "/applications/employer/all" : "/applications/my-applications";
+      const { ok, data } = await apiGet(endpoint, token);
 
       if (ok) {
         setApps(data);
@@ -28,6 +32,18 @@ export default function Applications() {
       setError("Unable to connect to the server");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updateStatus = async (id, newStatus) => {
+    if (!window.confirm(`Are you sure you want to mark this as ${newStatus}?`)) return;
+
+    const { ok } = await apiPut(`/applications/${id}/status`, { status: newStatus }, token);
+    if (ok) {
+      // Refresh local state
+      setApps(apps.map(app => app.id === id ? { ...app, status: newStatus } : app));
+    } else {
+      alert("Failed to update status");
     }
   };
 
@@ -64,7 +80,9 @@ export default function Applications() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h2 className="text-2xl font-bold text-slate-900 mb-6">My Applications</h2>
+      <h2 className="text-2xl font-bold text-slate-900 mb-6">
+        {isEmployer ? "Received Applications" : "My Applications"}
+      </h2>
 
       {apps.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-slate-200">
@@ -73,11 +91,15 @@ export default function Applications() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-slate-900">No applications yet</h3>
-          <p className="mt-1 text-slate-500 max-w-sm mx-auto p-2">Start browsing jobs and apply to the ones that match your skills.</p>
-          <Link to="/jobs" className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-            Browse Jobs
-          </Link>
+          <h3 className="text-lg font-medium text-slate-900">No applications found</h3>
+          <p className="mt-1 text-slate-500 max-w-sm mx-auto p-2">
+            {isEmployer ? "You haven't received any applications yet." : "Start browsing jobs and apply to the ones that match your skills."}
+          </p>
+          {!isEmployer && (
+            <Link to="/jobs" className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+              Browse Jobs
+            </Link>
+          )}
         </div>
       ) : (
         <div className="grid gap-6">
@@ -87,32 +109,29 @@ export default function Applications() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-xl font-semibold text-slate-900">
-                      <Link to={`/jobs/${app.jobId}`} className="hover:text-indigo-600 transition-colors">
-                        {app.job?.title || "Unknown Job"}
-                      </Link>
+                      {isEmployer ? (
+                        <span>{app.user?.name || "Unknown Candidate"}</span>
+                      ) : (
+                        <Link to={`/jobs/${app.jobId}`} className="hover:text-indigo-600 transition-colors">
+                          {app.job?.title || "Unknown Job"}
+                        </Link>
+                      )}
                     </h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(app.status)}`}>
                       {app.status}
                     </span>
                   </div>
-                  <p className="text-slate-600 font-medium">{app.job?.employer?.name || "Unknown Company"}</p>
+
+                  {isEmployer ? (
+                    <div className="text-slate-600">
+                      <p className="font-medium">Applied for: {app.job?.title}</p>
+                      <p className="text-sm text-slate-500 mt-1">{app.user?.email}</p>
+                    </div>
+                  ) : (
+                    <p className="text-slate-600 font-medium">{app.job?.employer?.name || "Unknown Company"}</p>
+                  )}
 
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-sm text-slate-500">
-                    <div className="flex items-center">
-                      <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {app.job?.location || "N/A"}
-                    </div>
-                    {app.job?.salary && (
-                      <div className="flex items-center">
-                        <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        ${app.job.salary.toLocaleString()}
-                      </div>
-                    )}
                     <div className="flex items-center">
                       <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -122,16 +141,23 @@ export default function Applications() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 mt-2 md:mt-0">
+                <div className="flex flex-col items-end gap-3 mt-2 md:mt-0">
                   {app.resume && (
                     <a
-                      href={app.resume.startsWith('http') ? app.resume : `http://localhost:3002${app.resume}`}
+                      href={app.resume.startsWith('http') ? app.resume : `${API_URL.replace('/api', '')}${app.resume}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
                     >
                       View Resume
                     </a>
+                  )}
+
+                  {isEmployer && app.status === 'PENDING' && (
+                    <div className="flex gap-2">
+                      <button onClick={() => updateStatus(app.id, 'ACCEPTED')} className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">Accept</button>
+                      <button onClick={() => updateStatus(app.id, 'REJECTED')} className="px-3 py-1 text-xs font-medium text-red-700 bg-red-100 rounded hover:bg-red-200">Reject</button>
+                    </div>
                   )}
                 </div>
               </div>

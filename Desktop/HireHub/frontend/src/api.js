@@ -10,26 +10,35 @@ export async function apiGet(endpoint, token = null) {
 }
 
 export async function apiPost(endpoint, body, token = null) {
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  if (!(body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    body: JSON.stringify(body),
+    headers,
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
   const data = await res.json();
   return { ok: res.ok, data };
 }
 
 export async function apiPut(endpoint, body, token) {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  if (!(body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${API_URL}${endpoint}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
+    headers,
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
   const data = await res.json();
   return { ok: res.ok, data };
