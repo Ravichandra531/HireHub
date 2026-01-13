@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { apiGet, apiPost, apiDelete } from "../api";
 import { useAuth } from "../context/AuthContext";
+import Button from "../components/Button";
 
 export default function JobDetails() {
   const { id } = useParams();
   const { token, user } = useAuth();
   const [job, setJob] = useState(null);
+  const [applying, setApplying] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,18 +21,31 @@ export default function JobDetails() {
   }, [id]);
 
   const apply = async () => {
-    const { ok, data } = await apiPost("/applications", { jobId: parseInt(id) }, token);
-    if (ok) {
-      alert("Application submitted successfully!");
-    } else {
-      alert(data.error || "Failed to apply");
+    setApplying(true);
+    try {
+      const { ok, data } = await apiPost("/applications", { jobId: parseInt(id) }, token);
+      if (ok) {
+        alert("Application submitted successfully!");
+      } else {
+        alert(data.error || "Failed to apply");
+      }
+    } catch (error) {
+      alert("An error occurred while applying.");
+    } finally {
+      setApplying(false);
     }
   };
 
   const remove = async () => {
     if (window.confirm("Are you sure you want to delete this job?")) {
-      await apiDelete(`/jobs/${id}`, token);
-      navigate("/jobs");
+      setDeleting(true);
+      try {
+        await apiDelete(`/jobs/${id}`, token);
+        navigate("/jobs");
+      } catch (error) {
+        alert("Failed to delete job");
+        setDeleting(false);
+      }
     }
   };
 
@@ -99,9 +115,9 @@ export default function JobDetails() {
 
         <div className="border-t border-slate-200 pt-8 flex gap-4">
           {user?.role === "JOBSEEKER" && (
-            <button onClick={apply} className="btn btn-primary">
+            <Button onClick={apply} loading={applying}>
               Apply Now
-            </button>
+            </Button>
           )}
 
           {user?.role === "EMPLOYER" && (
@@ -109,9 +125,9 @@ export default function JobDetails() {
               <Link to={`/jobs/edit/${job.id}`} className="btn btn-secondary">
                 Edit Job
               </Link>
-              <button onClick={remove} className="btn btn-danger">
+              <Button onClick={remove} variant="danger" loading={deleting}>
                 Delete Job
-              </button>
+              </Button>
             </>
           )}
         </div>

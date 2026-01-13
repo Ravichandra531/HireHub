@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiPost } from "../api";
 import { useAuth } from "../context/AuthContext";
+import Button from "../components/Button";
 
 export default function Signup() {
   const { login } = useAuth();
@@ -14,12 +15,15 @@ export default function Signup() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMsg("");
     try {
       const { ok, data } = await apiPost("/auth/signup", form);
 
@@ -41,6 +45,8 @@ export default function Signup() {
       }
     } catch (error) {
       setMsg("Unable to connect to the server. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,12 +142,13 @@ export default function Signup() {
           </div>
 
           <div>
-            <button
+            <Button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              loading={loading}
+              className="w-full justify-center"
             >
               Sign up
-            </button>
+            </Button>
           </div>
 
           <div className="flex flex-col items-center space-y-2 text-sm">

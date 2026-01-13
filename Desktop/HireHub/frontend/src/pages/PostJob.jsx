@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiPost } from "../api";
 import { useAuth } from "../context/AuthContext";
+import Button from "../components/Button";
 
 export default function PostJob() {
   const { token } = useAuth();
   const nav = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -20,16 +22,23 @@ export default function PostJob() {
 
   const submit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const jobData = {
       ...form,
       salary: form.salary ? parseInt(form.salary) : null,
     };
-    const { ok, data } = await apiPost("/jobs", jobData, token);
-    if (ok) {
-      alert("Job posted successfully!");
-      nav("/jobs");
-    } else {
-      alert(data.error || "Failed to post job");
+    try {
+      const { ok, data } = await apiPost("/jobs", jobData, token);
+      if (ok) {
+        alert("Job posted successfully!");
+        nav("/jobs");
+      } else {
+        alert(data.error || "Failed to post job");
+      }
+    } catch (error) {
+      alert("An error occurred while posting the job.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,19 +114,20 @@ export default function PostJob() {
         </div>
 
         <div className="pt-4 flex justify-end gap-4">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => nav("/jobs")}
-            className="btn btn-secondary"
+            disabled={loading}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="btn btn-primary"
+            loading={loading}
           >
             Create Job
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiGet, apiPut, API_URL } from "../api";
 import { useAuth } from "../context/AuthContext";
+import Button from "../components/Button";
 
 export default function Applications() {
   const { token, user } = useAuth();
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(null); // Track which application is being updated
 
   const role = user?.role || localStorage.getItem("role");
   const isEmployer = role === "EMPLOYER";
@@ -38,6 +40,7 @@ export default function Applications() {
   const updateStatus = async (id, newStatus) => {
     if (!window.confirm(`Are you sure you want to mark this as ${newStatus}?`)) return;
 
+    setUpdatingStatus(id);
     const { ok } = await apiPut(`/applications/${id}/status`, { status: newStatus }, token);
     if (ok) {
       // Refresh local state
@@ -45,6 +48,7 @@ export default function Applications() {
     } else {
       alert("Failed to update status");
     }
+    setUpdatingStatus(null);
   };
 
   const getStatusColor = (status) => {
@@ -155,8 +159,22 @@ export default function Applications() {
 
                   {isEmployer && app.status === 'PENDING' && (
                     <div className="flex gap-2">
-                      <button onClick={() => updateStatus(app.id, 'ACCEPTED')} className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded hover:bg-green-200">Accept</button>
-                      <button onClick={() => updateStatus(app.id, 'REJECTED')} className="px-3 py-1 text-xs font-medium text-red-700 bg-red-100 rounded hover:bg-red-200">Reject</button>
+                      <Button
+                        onClick={() => updateStatus(app.id, 'ACCEPTED')}
+                        variant="primary"
+                        className="px-3 py-1 text-xs !bg-green-600 hover:!bg-green-700 focus:!ring-green-500"
+                        loading={updatingStatus === app.id}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        onClick={() => updateStatus(app.id, 'REJECTED')}
+                        variant="danger"
+                        className="px-3 py-1 text-xs"
+                        loading={updatingStatus === app.id}
+                      >
+                        Reject
+                      </Button>
                     </div>
                   )}
                 </div>

@@ -1,6 +1,5 @@
 const prisma = require("../prisma/client");
-const fs = require('fs');
-const path = require('path');
+
 
 const applyForJob = async (req, res) => {
   const { jobId, coverLetter } = req.body;
@@ -18,7 +17,6 @@ const applyForJob = async (req, res) => {
       return res.status(400).json({ error: "This job is no longer active" });
     }
 
-    // Check if already applied
     const existing = await prisma.application.findUnique({
       where: {
         jobId_userId: {
@@ -32,7 +30,6 @@ const applyForJob = async (req, res) => {
       return res.status(400).json({ error: "You have already applied for this job" });
     }
 
-    // Get user's default resume
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
       select: { resume: true }
@@ -128,7 +125,6 @@ const updateApplicationStatus = async (req, res) => {
       return res.status(400).json({ error: "Invalid status" });
     }
 
-    // Check if application exists and belongs to employer's job
     const application = await prisma.application.findUnique({
       where: { id: parseInt(id) },
       include: { job: true }
@@ -159,7 +155,6 @@ const getApplicationsByJob = async (req, res) => {
   try {
     const { jobId } = req.params;
 
-    // Verify job belongs to employer
     const job = await prisma.job.findUnique({
       where: { id: parseInt(jobId) }
     });

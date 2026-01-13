@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiGet, apiPut } from "../api";
+import Button from "../components/Button";
 
 export default function EditJob() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function EditJob() {
   });
 
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState("");
 
   // Fetch job details for editing
@@ -51,6 +53,7 @@ export default function EditJob() {
   const submit = async (e) => {
     e.preventDefault();
     setMsg("");
+    setSubmitting(true);
 
     const token = localStorage.getItem("token");
 
@@ -59,15 +62,21 @@ export default function EditJob() {
       salary: form.salary ? parseInt(form.salary) : null,
     };
 
-    const { ok, data } = await apiPut(`/jobs/${id}`, jobData, token);
+    try {
+      const { ok, data } = await apiPut(`/jobs/${id}`, jobData, token);
 
-    if (!ok) {
-      setMsg(data.error || "Update failed");
-      return;
+      if (!ok) {
+        setMsg(data.error || "Update failed");
+        return;
+      }
+
+      setMsg("Job updated successfully!");
+      setTimeout(() => navigate(`/jobs/${id}`), 1000);
+    } catch (error) {
+      setMsg("An error occurred while updating the job.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setMsg("Job updated successfully!");
-    setTimeout(() => navigate(`/jobs/${id}`), 1000);
   };
 
   if (loading) return (
@@ -166,16 +175,17 @@ export default function EditJob() {
         </div>
 
         <div className="pt-4 flex justify-end gap-4">
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => navigate(`/jobs/${id}`)}
-            className="btn btn-secondary"
+            disabled={submitting}
           >
             Cancel
-          </button>
-          <button type="submit" className="btn btn-primary">
+          </Button>
+          <Button type="submit" loading={submitting}>
             Update Job
-          </button>
+          </Button>
         </div>
       </form>
     </div>
