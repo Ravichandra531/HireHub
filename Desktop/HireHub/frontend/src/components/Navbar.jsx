@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const { token, user, logout } = useAuth();
+  const role = user?.role;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+  const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
@@ -69,7 +69,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="ml-4 bg-white text-slate-500 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium border border-slate-200 hover:border-red-200 transition-colors"
               >
                 Logout

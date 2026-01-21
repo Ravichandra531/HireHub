@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { apiGet, apiPost, apiDelete } from "../api";
+import { apiGet, apiDelete, API_URL } from "../api";
 import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 
@@ -10,6 +10,9 @@ export default function JobDetails() {
   const [job, setJob] = useState(null);
   const [applying, setApplying] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showApplyForm, setShowApplyForm] = useState(false);
+  const [resume, setResume] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,17 +23,43 @@ export default function JobDetails() {
     load();
   }, [id]);
 
-  const apply = async () => {
+  const apply = async (e) => {
+    e.preventDefault();
+    setError("");
     setApplying(true);
+
     try {
-      const { ok, data } = await apiPost("/applications", { jobId: parseInt(id) }, token);
-      if (ok) {
-        alert("Application submitted successfully!");
-      } else {
-        alert(data.error || "Failed to apply");
+      const formData = new FormData();
+      formData.append("jobId", id);
+      if (resume) {
+        formData.append("resume", resume);
       }
-    } catch (error) {
-      alert("An error occurred while applying.");
+
+      const response = await fetch(`${API_URL}/applications`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Application submitted successfully!");
+        setShowApplyForm(false);
+        setResume(null);
+      } else {
+        if (data.error?.includes("resume")) {
+          setError("Please upload your resume to apply for this job.");
+        } else if (data.error?.includes("already applied")) {
+          setError("You have already applied for this job.");
+        } else {
+          setError(data.error || "Failed to submit application. Please try again.");
+        }
+      }
+    } catch (err) {
+      setError("Unable to connect to the server. Please try again later.");
     } finally {
       setApplying(false);
     }
@@ -66,7 +95,7 @@ export default function JobDetails() {
             </p>
           </div>
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-            Full-time
+            {job.jobType || 'Full-time'}
           </span>
         </div>
 
@@ -113,22 +142,67 @@ export default function JobDetails() {
           )}
         </div>
 
-        <div className="border-t border-slate-200 pt-8 flex gap-4">
-          {user?.role === "JOBSEEKER" && (
-            <Button onClick={apply} loading={applying}>
+        <div className="border-t border-slate-200 pt-8">
+          {user?.role === "JOBSEEKER" && !showApplyForm && (
+            <Button onClick={() => setShowApplyForm(true)}>
               Apply Now
             </Button>
           )}
 
-          {user?.role === "EMPLOYER" && (
-            <>
+          {user?.role === "JOBSEEKER" && showApplyForm && (
+            <form onSubmit={apply} className="bg-slate-50 rounded-lg p-6 space-y-4">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Submit Your Application</h3>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Resume (PDF) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) => setResume(e.target.files[0])}
+                  className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  Upload your resume or we'll use the one from your profile (if available)
+                </p>
+              </div>
+
+
+
+              <div className="flex gap-3">
+                <Button type="submit" loading={applying}>
+                  Submit Application
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowApplyForm(false);
+                    setError("");
+                  }}
+                  className="px-4 py-2 text-slate-700 bg-slate-200 rounded-lg hover:bg-slate-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+
+          {user?.role === "EMPLOYER" && user?.id === job.employer?.id && (
+            <div className="flex gap-4">
               <Link to={`/jobs/edit/${job.id}`} className="btn btn-secondary">
                 Edit Job
               </Link>
               <Button onClick={remove} variant="danger" loading={deleting}>
                 Delete Job
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>

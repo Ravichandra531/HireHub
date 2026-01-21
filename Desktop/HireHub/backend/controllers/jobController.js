@@ -45,20 +45,20 @@ const getAllJobs = async (req, res) => {
       AND: []
     };
 
-    // Search in title, description, and skills
-    if (search) {
+    // Search only by company name as requested
+    if (search && search.trim()) {
       where.AND.push({
-        OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-          { skills: { contains: search, mode: 'insensitive' } }
-        ]
+        employer: {
+          name: { contains: search.trim(), mode: 'insensitive' }
+        }
       });
     }
 
     // Filter by category
     if (category && category !== 'All') {
-      where.AND.push({ category });
+      where.AND.push({
+        category: { equals: category, mode: 'insensitive' }
+      });
     }
 
     // Filter by job type
@@ -85,6 +85,8 @@ const getAllJobs = async (req, res) => {
     if (where.AND.length === 0) {
       delete where.AND;
     }
+
+    console.log("JobFilter Where:", JSON.stringify(where, null, 2));
 
     // Calculate pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -231,13 +233,11 @@ const toggleSaveJob = async (req, res) => {
     });
 
     if (existing) {
-      // Unsave
       await prisma.savedJob.delete({
         where: { id: existing.id }
       });
       res.json({ message: "Job removed from saved", saved: false });
     } else {
-      // Save
       await prisma.savedJob.create({
         data: { userId, jobId }
       });
@@ -277,7 +277,7 @@ const getSavedJobs = async (req, res) => {
   }
 };
 
-// Get job categories (for filter dropdown)
+
 const getCategories = async (req, res) => {
   try {
     const categories = await prisma.job.findMany({

@@ -9,14 +9,13 @@ export default function Applications() {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updatingStatus, setUpdatingStatus] = useState(null); // Track which application is being updated
+  const [updatingStatus, setUpdatingStatus] = useState(null);
 
-  const role = user?.role || localStorage.getItem("role");
+  const role = user?.role;
   const isEmployer = role === "EMPLOYER";
 
   useEffect(() => {
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role]);
 
   const loadData = async () => {

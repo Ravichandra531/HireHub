@@ -6,7 +6,7 @@ const applyForJob = async (req, res) => {
 
   try {
     const job = await prisma.job.findUnique({
-      where: { id: parseInt(jobId) },
+      where: { id: Number(jobId) },
     });
 
     if (!job) {
@@ -20,7 +20,7 @@ const applyForJob = async (req, res) => {
     const existing = await prisma.application.findUnique({
       where: {
         jobId_userId: {
-          jobId: parseInt(jobId),
+          jobId: Number(jobId),
           userId: req.user.id,
         },
       },
@@ -35,11 +35,17 @@ const applyForJob = async (req, res) => {
       select: { resume: true }
     });
 
+    const resumePath = req.file ? `/uploads/${req.file.filename}` : user.resume;
+
+    if (!resumePath) {
+      return res.status(400).json({ error: "You must upload a resume to apply for this job" });
+    }
+
     const applicationData = {
-      jobId: parseInt(jobId),
+      jobId: Number(jobId),
       userId: req.user.id,
       coverLetter: coverLetter || null,
-      resume: req.file ? `/uploads/${req.file.filename}` : user.resume,
+      resume: resumePath,
     };
 
     const application = await prisma.application.create({
@@ -126,7 +132,7 @@ const updateApplicationStatus = async (req, res) => {
     }
 
     const application = await prisma.application.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
       include: { job: true }
     });
 
@@ -139,7 +145,7 @@ const updateApplicationStatus = async (req, res) => {
     }
 
     const updated = await prisma.application.update({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
       data: { status }
     });
 
@@ -156,7 +162,7 @@ const getApplicationsByJob = async (req, res) => {
     const { jobId } = req.params;
 
     const job = await prisma.job.findUnique({
-      where: { id: parseInt(jobId) }
+      where: { id: Number(jobId) }
     });
 
     if (!job) {
@@ -168,7 +174,7 @@ const getApplicationsByJob = async (req, res) => {
     }
 
     const applications = await prisma.application.findMany({
-      where: { jobId: parseInt(jobId) },
+      where: { jobId: Number(jobId) },
       include: {
         user: {
           select: {

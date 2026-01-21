@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { apiGet, apiPut } from "../api";
+import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 
 export default function EditJob() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   const [form, setForm] = useState({
     title: "",
@@ -20,11 +22,9 @@ export default function EditJob() {
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState("");
 
-  // Fetch job details for editing
+
   useEffect(() => {
     const fetchJob = async () => {
-      const token = localStorage.getItem("token");
-
       const { ok, data } = await apiGet(`/jobs/${id}`, token);
 
       if (!ok) {
@@ -45,7 +45,7 @@ export default function EditJob() {
     };
 
     fetchJob();
-  }, [id]);
+  }, [id, token]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -54,8 +54,6 @@ export default function EditJob() {
     e.preventDefault();
     setMsg("");
     setSubmitting(true);
-
-    const token = localStorage.getItem("token");
 
     const jobData = {
       ...form,

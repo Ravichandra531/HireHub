@@ -36,9 +36,7 @@ const updateProfile = async (req, res) => {
     if (location !== undefined) updateData.location = location;
     if (bio !== undefined) updateData.bio = bio;
 
-    // Handle resume file upload
     if (req.file) {
-      // Delete old resume if exists
       const oldUser = await prisma.user.findUnique({
         where: { id: req.user.id },
         select: { resume: true }
@@ -88,13 +86,11 @@ const deleteResume = async (req, res) => {
     });
 
     if (user.resume) {
-      // Delete file from filesystem
       const filePath = path.join(__dirname, '../uploads', path.basename(user.resume));
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
 
-      // Update database
       await prisma.user.update({
         where: { id: req.user.id },
         data: { resume: null }

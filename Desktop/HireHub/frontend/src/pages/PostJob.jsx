@@ -15,6 +15,7 @@ export default function PostJob() {
     location: "",
     salary: "",
     experience: "",
+    category: "",
   });
 
   const handle = (e) =>
@@ -91,14 +92,32 @@ export default function PostJob() {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Experience Required</label>
-          <input
-            name="experience"
-            placeholder="e.g. 3+ years"
-            onChange={handle}
-            className="input-field"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+            <select
+              name="category"
+              onChange={handle}
+              required
+              className="input-field"
+              defaultValue=""
+            >
+              <option value="" disabled>Select Category</option>
+              <option value="Web3">Web3</option>
+              <option value="DevOps">DevOps</option>
+              <option value="ML">Machine Learning (ML)</option>
+              <option value="Web Developer">Web Developer</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Experience Required</label>
+            <input
+              name="experience"
+              placeholder="e.g. 3+ years"
+              onChange={handle}
+              className="input-field"
+            />
+          </div>
         </div>
 
         <div>

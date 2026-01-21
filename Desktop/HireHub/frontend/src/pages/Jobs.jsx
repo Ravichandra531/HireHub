@@ -91,7 +91,7 @@ export default function Jobs() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Search</label>
                 <input
                   type="text"
-                  placeholder="Title, skills, etc."
+                  placeholder="Company Name"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
@@ -106,11 +106,10 @@ export default function Jobs() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
                 >
                   <option value="All">All Categories</option>
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
+                  <option value="Web3">Web3</option>
+                  <option value="DevOps">DevOps</option>
+                  <option value="ML">Machine Learning (ML)</option>
+                  <option value="Web Developer">Web Developer</option>
                 </select>
               </div>
 
