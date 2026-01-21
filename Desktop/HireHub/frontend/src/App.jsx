@@ -4,8 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Footer from "./components/Footer";
 
 // Pages
-import Signup from "./pages/signup.jsx";
-import Login from "./pages/login.jsx";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import EditJob from "./pages/EditJob";
