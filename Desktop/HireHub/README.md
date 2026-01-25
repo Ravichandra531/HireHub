@@ -1,76 +1,105 @@
 HireHub
 
-HireHub is a professional job portal application that allows job seekers to find their dream careers and employers to discover top talent. Like a job by applying to it, or save it for later. A simple, intuitive interface for finding your perfect career path.
+HireHub is a professional job portal application that allows job seekers to find their dream careers and employers to discover top talent. Users can apply to jobs, save them for later, and manage their profiles through a clean and intuitive interface designed to simplify the hiring process.
 
-Features
+🚀 Features
 
-- Dual-Role Interface: Seamless transition between Job Seeker and Employer roles
-- Job Discovery: Advanced search and filtering to find the right opportunities
-- Employer Dashboard: Powerful tools for managing job postings and applications
-- Profile Management: Showcase your skills or company highlights
-- Responsive Design: Works perfectly on both desktop and mobile devices
+Dual-Role Interface
+Seamless switching between Job Seeker and Employer roles
 
-Tech Stack
+Job Discovery
+Advanced search and filtering to find the right opportunities
 
-- React.js: A powerful UI library for building dynamic interfaces
-- Node.js & Express: Robust backend architecture for handling complex logic
-- Prisma: Modern ORM for efficient database management
-- Tailwind CSS: Utility-first CSS for a premium and modern look
-- JWT: Secure authentication and session management
+Employer Dashboard
+Tools for managing job postings and reviewing applications
 
-Getting Started
+Profile Management
+Showcase skills as a job seeker or highlight your company as an employer
 
+Responsive Design
+Fully optimized for desktop and mobile devices
+
+🛠 Tech Stack
+
+React.js – Dynamic and interactive UI
+
+Node.js & Express – Backend server and API handling
+
+Prisma – Modern ORM for database management
+
+Tailwind CSS – Utility-first CSS for a clean, modern design
+
+JWT – Secure authentication and session handling
+
+PostgreSQL – Relational database
+
+🧰 Getting Started
 Prerequisites
 
-- Node.js 16.0.0 or newer
-- npm or yarn
-- PostgreSQL instance
+Node.js v16.0.0 or newer
 
-Installation
+npm or yarn
 
-1. Clone the repository:
-   git clone <repository-url>
-   cd HireHub
+PostgreSQL database
 
-2. Backend Setup:
-   cd backend
-   npm install
-   # or
-   yarn install
-   Configure your .env with DATABASE_URL and JWT_SECRET
+📦 Installation
+1. Clone the repository
+git clone <repository-url>
+cd HireHub
 
-3. Frontend Setup:
-   cd ../frontend
-   npm install
-   # or
-   yarn install
+2. Backend Setup
+cd backend
+npm install
+# or
+yarn install
 
-4. Run the development server:
-   - Backend: npm start (in /backend)
-   - Frontend: npm run dev (in /frontend)
 
-5. Open http://localhost:3002 with your browser to see the application.
+Create a .env file and configure:
 
-Project Structure
+DATABASE_URL=your_postgresql_connection_string
+JWT_SECRET=your_secret_key
 
+
+Start the backend server:
+
+npm start
+
+3. Frontend Setup
+cd ../frontend
+npm install
+# or
+yarn install
+
+
+Start the frontend development server:
+
+npm run dev
+
+4. Open in Browser Visit:http://localhost:3002
+
+📁 Project Structure
 HireHub/
-├── backend/            # Express server & Prisma logic
-│   ├── controllers/    # API request handlers
-│   ├── prisma/         # Database schema & client
-│   ├── routes/         # API endpoints
-│   └── index.js        # Server entry point
-├── frontend/           # Vite + React application
+├── backend/
+│   ├── controllers/     # API request handlers
+│   ├── prisma/          # Database schema & Prisma client
+│   ├── routes/          # API endpoints
+│   └── index.js         # Server entry point
+│
+├── frontend/
 │   ├── src/
-│   │   ├── components/ # Reusable UI components
-│   │   ├── pages/      # Main application views
-│   │   └── App.jsx     # Routing & Core logic
+│   │   ├── components/  # Reusable UI components
+│   │   ├── pages/       # Application pages
+│   │   └── App.jsx      # Routing & core logic
 │   └── tailwind.config.js
-└── README.md           # Project documentation
+│
+└── README.md            # Project documentation
 
-Usage
+📌 Usage
 
-- Visit the landing page to explore featured jobs
-- Sign up as a Job Seeker to apply for positions and upload your resume
-- Sign up as an Employer to post jobs and review candidate applications
-- Use the Dashboard to track your applications or manage your job listings
+Explore featured jobs on the landing page
 
+Sign up as a Job Seeker to apply for jobs and upload resumes
+
+Sign up as an Employer to post jobs and review applications
+
+Use the Dashboard to manage applications or job listings
