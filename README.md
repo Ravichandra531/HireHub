@@ -75,28 +75,23 @@ Start the frontend development server:
 
 npm run dev
 
-4. Open in Browser
+5. Open http://localhost:3002 with your browser to see the application.
 
-Visit:
+Project Structure
 
-http://localhost:3002
-
-📁 Project Structure
 HireHub/
-├── backend/
-│   ├── controllers/     # API request handlers
-│   ├── prisma/          # Database schema & Prisma client
-│   ├── routes/          # API endpoints
-│   └── index.js         # Server entry point
-│
-├── frontend/
+├── backend/            # Express server & Prisma logic
+│   ├── controllers/    # API request handlers
+│   ├── prisma/         # Database schema & client
+│   ├── routes/         # API endpoints
+│   └── index.js        # Server entry point
+├── frontend/           # Vite + React application
 │   ├── src/
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Application pages
-│   │   └── App.jsx      # Routing & core logic
+│   │   ├── components/ # Reusable UI components
+│   │   ├── pages/      # Main application views
+│   │   └── App.jsx     # Routing & Core logic
 │   └── tailwind.config.js
-│
-└── README.md            # Project documentation
+└── README.md           # Project documentation
 
 📌 Usage
 
