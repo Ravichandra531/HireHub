@@ -179,6 +179,4 @@ The frontend runs on `http://localhost:5173` by default.
 
 ---
 
-## License
 
-MIT
