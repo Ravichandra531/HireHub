@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  name       String
+  email      String  @unique
+  password   String
+  role       Role
+  phone      String?
+  location   String?
+  resume     String?  // URL to resume file
+  bio        String?  // User bio/summary
+
+  jobs        Job[]          @relation("EmployerJobs")
+  applications Application[]
+  savedJobs   SavedJob[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Job {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  skills      String
+  location    String
+  salary      Int?
+  experience  String?
+  category    String    @default("Other")  // e.g., "Technology", "Marketing", etc.
+  jobType     JobType   @default(FULLTIME)
+  isActive    Boolean   @default(true)
+
+  employerId  Int
+  employer    User      @relation("EmployerJobs", fields: [employerId], references: [id], onDelete: Cascade)
+
+  applications Application[]
+  savedBy     SavedJob[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  jobId     Int
+  userId    Int
+  status    ApplicationStatus @default(PENDING)
+  resume    String?  // URL to resume file for this application
+  coverLetter String?  // Cover letter text
+
+  job       Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jobId, userId]) // prevents duplicate applications
+}
+
+model SavedJob {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  jobId     Int
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job       Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+}
+
+enum Role {
+  EMPLOYER
+  JOBSEEKER
+}
+
+enum JobType {
+  FULLTIME
+  PARTTIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+  ACCEPTED
+}
